@@ -1,6 +1,6 @@
 from datetime import datetime
 from blogapp import db, bcrypt, ma, login_manager
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 import uuid
 import re
 
