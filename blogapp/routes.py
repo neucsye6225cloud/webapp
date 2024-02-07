@@ -1,11 +1,12 @@
+import base64
 from flask import request, make_response, jsonify
-from pymysql import IntegrityError
-from blogapp import app, db, basic_auth
+from blogapp import app, db, basic_auth, bcrypt
 from sqlalchemy import text
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from blogapp.models import User
-from flask_login import login_user, current_user
+# from flask_login import login_user, current_user
 import logging
+from datetime import datetime
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
@@ -108,8 +109,96 @@ def get_user():
     auth_header = request.headers.get('Authorization')
     if not auth_header:
         return make_response(jsonify({'error': 'Authorization header missing'}), 401)
+    
+    try:
+        auth_type, credentials = auth_header.split(' ')
+        if auth_type.lower() == 'basic':
+            decoded_credentials = base64.b64decode(credentials).decode('utf-8')
+            username, _ = decoded_credentials.split(':', 1)
 
-    return make_response('')
+            user = User.query.filter_by(username=username).first()
+            if not user:
+                return make_response(jsonify({'error': 'User not found'}), 404)
+            
+            response_payload = {
+                "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "username": user.username,
+                "account_created": user.account_created.isoformat(),
+                "account_updated": user.account_updated.isoformat()
+            }
+
+        return make_response(jsonify(response_payload), 200)
+
+    except ValueError:
+        pass
+
+    return make_response(jsonify({'error': 'Invalid Authorization header'}), 401)
+
+@app.route('/v1/user/self', methods=['PUT'])
+@basic_auth.required
+def update_user_info():
+
+    auth_header = request.headers.get('Authorization')
+    if not auth_header:
+        return make_response(jsonify({'error': 'Authorization header missing'}), 401)
+
+    auth_type, credentials = auth_header.split(' ')
+    if auth_type.lower() == 'basic':
+        decoded_credentials = base64.b64decode(credentials).decode('utf-8')
+        username, _ = decoded_credentials.split(':', 1)
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return make_response(jsonify({'error': 'User not found'}), 404)
+        
+    data = request.get_json()
+
+    # except (ValueError, KeyError, TypeError):
+    #     return make_response(''), 400
+
+    # Check if only allowed fields are being updated
+    allowed_fields = ['first_name', 'last_name', 'password']
+    if not all(field in data for field in allowed_fields) or len(data) != len(allowed_fields):
+        return make_response(jsonify({'error': 'Invalid fields for update'}), 400)
+
+    # Update user information
+    user.first_name = data.get('first_name', user.first_name)
+    user.last_name = data.get('last_name', user.last_name)
+    user.password = bcrypt.generate_password_hash(data.get('password', user._password)).decode('utf-8')
+    user.account_updated = datetime.utcnow()
+
+    # Save the updated user to the database
+    db.session.commit()
+
+    # Response payload without password
+    response_payload = {
+        "id": user.id,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "username": user.username,
+        "account_created": user.account_created.isoformat(),
+        "account_updated": user.account_updated.isoformat()
+    }
+
+    # # Response headers
+    # response_headers = {
+    #     'access-control-allow-credentials': 'true',
+    #     'access-control-allow-headers': 'X-Requested-With,Content-Type,Accept,Origin',
+    #     'access-control-allow-methods': '*',
+    #     'access-control-allow-origin': '*',
+    #     'cache-control': 'no-cache',
+    #     'content-encoding': 'gzip',
+    #     'content-type': 'application/json;charset=utf-8',
+    #     'date': datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'),
+    #     'expires': '-1',
+    #     'server': 'nginx',
+    #     'x-powered-by': 'Express'
+    # }
+
+    return make_response('', 204)
+
 
 
 @app.errorhandler(405)

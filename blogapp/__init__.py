@@ -13,6 +13,8 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin@localhost/cloud'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['BCRYPT_HANDLE_LONG_PASSWORDS'] = True
+app.config['BASIC_AUTH_USERNAME'] = 'jane.doe@example.com'
+app.config['BASIC_AUTH_PASSWORD'] = 'skdjfhskdfjhg'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
