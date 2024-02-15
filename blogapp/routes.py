@@ -45,8 +45,9 @@ def create_user():
         return make_response(''), 400
     
     # validation for mandatory fields
-    required_fields = ['first_name', 'last_name', 'password', 'username']
-    if not all(field in data for field in required_fields) or len(data) != len(required_fields):
+    required_fields = ['first_name', 'last_name', 'password', 'username'] 
+    updated_fields = [field for field in required_fields if field in data]
+    if len(updated_fields) != len(data):
         return make_response(''), 400
 
     try:
@@ -143,13 +144,20 @@ def update_user_info():
 
         # Check if only allowed fields are being updated
         allowed_fields = ['first_name', 'last_name', 'password']
-        if not all(field in data for field in allowed_fields) or len(data) != len(allowed_fields):
+        updated_fields = [field for field in allowed_fields if field in data]
+        if len(updated_fields) != len(data):
             return make_response(jsonify({'error': 'Invalid fields for update'}), 400)
 
         # Update user information
         user.first_name = data.get('first_name', user.first_name)
         user.last_name = data.get('last_name', user.last_name)
-        user.password = bcrypt.generate_password_hash(data.get('password', user._password)).decode('utf-8')
+        # user.password = bcrypt.generate_password_hash(data.get('password', user._password)).decode('utf-8')
+        password_update = data.get('password', user._password)
+
+        # Only update the password if a new one is provided
+        if password_update != user._password:
+            user.password = bcrypt.generate_password_hash(password_update).decode('utf-8')
+
 
         # Save the updated user to the database
         db.session.commit()

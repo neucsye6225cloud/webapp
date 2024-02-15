@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # MySQL configuration
-DB_USER="guest"
-DB_PASSWORD="password"
+DB_USER="root"
+DB_PASSWORD="root"
 DB_NAME="cloud"
 
 # Install MySQL server

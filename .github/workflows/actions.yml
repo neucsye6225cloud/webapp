@@ -20,11 +20,23 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    env:
+      DB_DATABASE: cloud
+      DB_USER: root
+      DB_PASSWORD: root
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
+
+      # export the database URL as environment variable to be used in application
+      - name: Start MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD
+          export DATABASE_URL=mysql+pymysql://$DB_USER:$DB_PASSWORD@localhost:3306/DB_DATABASE
 
       # Runs a single command using the runners shell
       - name: Install dependencies
