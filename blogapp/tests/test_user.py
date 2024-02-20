@@ -7,7 +7,7 @@ import base64
 class FlaskTestCase(unittest.TestCase):
     def setUp(self):
         # new temporary test environment
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:admin@localhost/cloud'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/cloud'
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
 
