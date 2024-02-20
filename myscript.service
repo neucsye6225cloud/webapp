@@ -1,0 +1,16 @@
+[Unit]
+Description=Custom Python Service
+After=network.target
+Conflicts=getty@tty1.service
+ 
+[Service]
+Type=simple
+User=csye6225
+Group=csye6225
+ExecStart=/usr/bin/python3.9 /webapp/run.py
+StandardInput=tty-force
+StandardOutput=syslog
+StandardError=syslog
+ 
+[Install]
+WantedBy=multi-user.target
