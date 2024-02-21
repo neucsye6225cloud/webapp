@@ -20,3 +20,8 @@ variable zone {
 }
 
 variable network {}
+
+variable custom_image_family_name {
+  type    = string
+  default = "csye6225-app-image"
+}
