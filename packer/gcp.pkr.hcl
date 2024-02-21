@@ -25,7 +25,7 @@ build {
   sources = ["source.googlecompute.centos"]
 
   provisioner "shell" {
-    script = "./scripts/os_setup.sh"
+    script = "./packer/scripts/os_setup.sh"
   }
 
   provisioner "file" {
@@ -34,15 +34,15 @@ build {
   }
 
   provisioner "shell" {
-    script = "./scripts/db.sh"
+    script = "./packer/scripts/db.sh"
   }
 
   provisioner "shell" {
-    script = "./scripts/app_setup.sh"
+    script = "./packer/scripts/app_setup.sh"
   }
 
   provisioner "shell" {
-    script = "./scripts/user_permission.sh"
+    script = "./packer/scripts/user_permission.sh"
   }
 
   // provisioner "file" {

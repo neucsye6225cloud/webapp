@@ -62,4 +62,8 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: packer validate -var-file='dev.pkrvars.hcl' .
+        run: packer validate -var-file='./packer/dev.pkrvars.hcl' packer/.
+
+      - name: Run 'packer build'
+        id: build
+        run: packer build -var-file='./packer/dev.pkrvars.hcl' packer/.
