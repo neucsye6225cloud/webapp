@@ -28,10 +28,6 @@ build {
     script = "./scripts/os_setup.sh"
   }
 
-  provisioner "shell" {
-    script = "./scripts/user_permission.sh"
-  }
-
   provisioner "file" {
     source      = "./webapp.zip"
     destination = "/tmp/"
@@ -43,6 +39,10 @@ build {
 
   provisioner "shell" {
     script = "./scripts/app_setup.sh"
+  }
+
+  provisioner "shell" {
+    script = "./scripts/user_permission.sh"
   }
 
   // provisioner "file" {
