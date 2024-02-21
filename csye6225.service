@@ -7,10 +7,11 @@ Conflicts=getty@tty1.service
 Type=simple
 User=csye6225
 Group=csye6225
-ExecStart=/usr/bin/python3.9 /webapp/run.py
+ExecStart=/usr/bin/python3.9 /tmp/webapp/run.py
 StandardInput=tty-force
 StandardOutput=syslog
 StandardError=syslog
+SyslogIdentifier=csye6225
  
 [Install]
 WantedBy=multi-user.target

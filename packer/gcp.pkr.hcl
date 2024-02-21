@@ -33,11 +33,20 @@ build {
   }
 
   provisioner "file" {
-    source      = "../webapp.zip"
+    source      = "./webapp.zip"
     destination = "/tmp/"
   }
 
   provisioner "shell" {
     script = "./scripts/db.sh"
   }
+
+  provisioner "shell" {
+    script = "./scripts/app_setup.sh"
+  }
+
+  // provisioner "file" {
+  //   source      = "./csye6225.service"
+  //   destination = "/etc/systemd/system"
+  // }  
 }
