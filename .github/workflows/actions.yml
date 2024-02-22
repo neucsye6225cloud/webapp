@@ -31,19 +31,19 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
 
-      # # export the database URL as environment variable to be used in application
-      # - name: Start MySQL
-      #   run: |
-      #     sudo /etc/init.d/mysql start
-      #     mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD
-      #     export DATABASE_URL=mysql+pymysql://$DB_USER:$DB_PASSWORD@localhost:3306/DB_DATABASE
+      # export the database URL as environment variable to be used in application
+      - name: Start MySQL
+        run: |
+          sudo /etc/init.d/mysql start
+          mysql -e "CREATE DATABASE IF NOT EXISTS $DB_DATABASE;" -u$DB_USER -p$DB_PASSWORD
+          export DATABASE_URL=mysql+pymysql://$DB_USER:$DB_PASSWORD@localhost:3306/DB_DATABASE
 
-      # # Runs a single command using the runners shell
-      # - name: Install dependencies
-      #   run: |
-      #       python -m pip install --upgrade pip
-      #       pip install -r requirements.txt
+      # Runs a single command using the runners shell
+      - name: Install dependencies
+        run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
 
-      # - name: Integration tests
-      #   run: |
-      #       python -m unittest blogapp/tests/test_user.py
+      - name: Integration tests
+        run: |
+            python -m unittest blogapp/tests/test_user.py
