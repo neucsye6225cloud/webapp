@@ -14,6 +14,7 @@ source "googlecompute" "centos" {
   zone                = "${var.zone}"
   network             = "${var.network}"
   use_internal_ip     = false
+  image_family        = "${var.custom_image_family_name}"
   image_labels = {
     "created-by" : "packer",
     "custom-app" : "blogapp"
@@ -25,11 +26,7 @@ build {
   sources = ["source.googlecompute.centos"]
 
   provisioner "shell" {
-    script = "./scripts/os_setup.sh"
-  }
-
-  provisioner "shell" {
-    script = "./scripts/user_permission.sh"
+    script = "./packer/scripts/os_setup.sh"
   }
 
   provisioner "file" {
@@ -38,15 +35,23 @@ build {
   }
 
   provisioner "shell" {
-    script = "./scripts/db.sh"
+    script = "./packer/scripts/db.sh"
   }
 
   provisioner "shell" {
-    script = "./scripts/app_setup.sh"
+    script = "./packer/scripts/app_setup.sh"
   }
 
-  // provisioner "file" {
-  //   source      = "./csye6225.service"
-  //   destination = "/etc/systemd/system"
-  // }  
+  provisioner "shell" {
+    script = "./packer/scripts/user_permission.sh"
+  }
+
+  provisioner "file" {
+    source      = "./csye6225.service"
+    destination = "/tmp/"
+  }
+
+  provisioner "shell" {
+    script = "./packer/scripts/services.sh"
+  }
 }
