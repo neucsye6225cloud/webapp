@@ -4,8 +4,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/tmp/webapp/venv/bin/python3.9 /tmp/wb_restart.sh
-
+ExecStart=/tmp/wb_restart.sh
 RemainAfterExit=yes
 
 [Install]
