@@ -1,0 +1,8 @@
+[Unit]
+Description=My Shell Script
+
+[Service]
+ExecStart=/tmp/webapp/packer/wb_restart.sh
+
+[Install]
+WantedBy=multi-user.target
