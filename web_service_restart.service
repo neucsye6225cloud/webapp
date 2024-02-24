@@ -1,8 +1,11 @@
 [Unit]
 Description=My Shell Script
+After=network.target
 
 [Service]
-ExecStart=/tmp/webapp/packer/wb_restart.sh
+Type=oneshot
+ExecStart=/tmp/wb_restart.sh
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
