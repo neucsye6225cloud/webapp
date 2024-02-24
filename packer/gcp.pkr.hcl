@@ -54,4 +54,23 @@ build {
   provisioner "shell" {
     script = "./packer/scripts/services.sh"
   }
+
+  # restart service part 
+  provisioner "file" {
+    source      = "./packer/scripts/wb_restart.sh"
+    destination = "/tmp/"
+  }
+
+  provisioner "shell" {
+    script = "./packer/scripts/wb_restart_permission.sh"
+  }
+
+  provisioner "file" {
+    source      = "./web_service_restart.service"
+    destination = "/tmp/"
+  }
+
+  provisioner "shell" {
+    script = "./packer/scripts/wb_restart_service.sh"
+  }
 }
