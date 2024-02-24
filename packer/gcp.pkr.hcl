@@ -61,6 +61,6 @@ build {
   }
 
   provisioner "shell" {
-    script = "./packer/wb_restart_service.sh"
+    script = "./packer/scripts/wb_restart_service.sh"
   }
 }
