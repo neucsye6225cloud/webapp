@@ -3,7 +3,7 @@ variable ssh_username {
 }
 
 variable image_name {
-  type = number
+  type = string
 }
 
 variable source_image_family {
