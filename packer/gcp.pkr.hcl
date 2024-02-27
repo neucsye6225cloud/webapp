@@ -11,7 +11,7 @@ source "googlecompute" "centos" {
   project_id          = "${var.project_id}"
   source_image_family = "${var.source_image_family}"
   ssh_username        = "${var.ssh_username}"
-  zone                = "${var.zone}"
+  zone                 = "${var.zone}"
   network             = "${var.network}"
   use_internal_ip     = false
   image_family        = "${var.custom_image_family_name}"
