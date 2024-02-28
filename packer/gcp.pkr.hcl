@@ -34,9 +34,9 @@ build {
     destination = "/tmp/"
   }
 
-  provisioner "shell" {
-    script = "./packer/scripts/db.sh"
-  }
+  // provisioner "shell" {
+  //   script = "./packer/scripts/db.sh"
+  // }
 
   provisioner "shell" {
     script = "./packer/scripts/app_setup.sh"
