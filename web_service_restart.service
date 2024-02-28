@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=oneshot
+ExecStartPre=/bin/bash -c 'while [ ! -f /tmp/success-indicator-file ]; do sleep 5; done'
 ExecStart=/tmp/wb_restart.sh
 RemainAfterExit=yes
 
