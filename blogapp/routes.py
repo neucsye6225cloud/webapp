@@ -30,6 +30,7 @@ def health_check():
         with db.engine.connect() as connection:
             connection.execute(text("SELECT 1"))
 
+        app.logger.info('Health check passed')
         return make_response('', 200)
     
     except SQLAlchemyError as e:

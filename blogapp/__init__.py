@@ -6,6 +6,8 @@ from flask_login import LoginManager
 from flask_httpauth import HTTPBasicAuth
 from dotenv import load_dotenv
 import os
+import logging.config
+from pythonjsonlogger import jsonlogger
 
 app = Flask(__name__)
 
@@ -23,6 +25,38 @@ instance_name = os.getenv("SQL_INSTANCE")
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['BCRYPT_HANDLE_LONG_PASSWORDS'] = True
+
+
+# Configure logging to write structured logs in JSON
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'json': {
+            'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+        }
+    },
+    'handlers': {
+        'wsgi': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+            'stream': 'ext://sys.stdout'
+        }
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['wsgi']
+        }
+    }
+})
+
+# custom JSON log formatter for the Flask app logger
+handler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter()
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
