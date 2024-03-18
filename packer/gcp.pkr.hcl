@@ -55,6 +55,10 @@ build {
     script = "./packer/scripts/services.sh"
   }
 
+  provisioner "shell" {
+    script = "./packer/scripts/ops_agent_setup.sh"
+  }
+
   # restart service part 
   provisioner "file" {
     source      = "./packer/scripts/wb_restart.sh"
