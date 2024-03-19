@@ -79,6 +79,7 @@ build {
   }
 
   provisioner "shell" {
-    inline = ["sudo systemctl restart google-cloud-ops-agent"]
+    inline = ["sleep 600"
+      "sudo systemctl restart google-cloud-ops-agent"]
   }
 }
