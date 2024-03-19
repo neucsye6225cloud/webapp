@@ -37,16 +37,23 @@ logging.config.dictConfig({
         }
     },
     'handlers': {
-        'wsgi': {
-            'class': 'logging.StreamHandler',
+        # 'wsgi': {
+        #     'class': 'logging.StreamHandler',
+        #     'formatter': 'json',
+        #     'stream': 'ext://sys.stdout'
+        # },
+        'file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'level': 'INFO',
+            'filename': '/var/log/blogapp/myapp.log',
             'formatter': 'json',
-            'stream': 'ext://sys.stdout'
+            'maxBytes': 5 * 1024 * 1024,
         }
     },
     'loggers': {
         '': {
             'level': 'INFO',
-            'handlers': ['wsgi']
+            'handlers': ['file']
         }
     }
 })

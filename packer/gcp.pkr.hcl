@@ -77,4 +77,8 @@ build {
   provisioner "shell" {
     script = "./packer/scripts/wb_restart_service.sh"
   }
+
+  provisioner "shell" {
+    inline = ["sudo systemctl restart google-cloud-ops-agent"]
+  }
 }
