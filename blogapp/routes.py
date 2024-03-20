@@ -36,6 +36,7 @@ def health_check():
         return make_response('', 200)
     
     except SQLAlchemyError as e:
+        app.logger.error('Database connection failed')
         return make_response(''), 503
 
 @app.route('/v1/user', methods=['POST'])
@@ -45,18 +46,21 @@ def create_user():
     try:
         data = request.get_json()
     except (ValueError, KeyError, TypeError):
+        app.logger.error('Invalid JSON request')
         return make_response(''), 400
     
     # validation for mandatory fields
     required_fields = ['first_name', 'last_name', 'password', 'username'] 
     updated_fields = [field for field in required_fields if field in data]
     if len(updated_fields) != len(data):
+        app.logger.error('invalid fields in request')
         return make_response(''), 400
 
     try:
         # validation of email address already exists for the user
         existing_user = User.query.filter_by(username=data['username']).first()
         if existing_user:
+            app.logger.warn('User already exists')
             return make_response(''), 400
 
         new_user = User(
@@ -79,14 +83,17 @@ def create_user():
             "account_updated": new_user.account_updated.isoformat()
         }
 
+        app.logger.info('User created successfully')
         return make_response(jsonify(response_payload), 201)
 
     except IntegrityError as e:
         # database integrity 
         db.session.rollback()
+        app.logger.error('Database connection failed')
         return make_response(jsonify({'error': 'Database integrity error'}), 503)
     except (ValueError, KeyError, TypeError):
         db.session.rollback()
+        app.logger.error('error creating the user')
         return make_response('', 400)
 
 @app.route('/v1/user/self', methods=['GET'])
@@ -94,6 +101,7 @@ def create_user():
 def get_user():
     auth_header = request.headers.get('Authorization')
     if not auth_header:
+        app.logger.error('Authorization header not found')
         return make_response('', 401)
     
     try:
@@ -104,6 +112,7 @@ def get_user():
 
             user = User.query.filter_by(username=username).first()
             if not user:
+                app.logger.error('User not found')
                 return make_response(jsonify({'error': 'User not found'}), 404)
             
             response_payload = {
@@ -115,11 +124,14 @@ def get_user():
                 "account_updated": user.account_updated.isoformat()
             }
 
+            app.logger.info('User details fetched successfully')
             return make_response(jsonify(response_payload), 200)
 
     except ValueError:
+        app.logger.error('Invalid Authorization header')
         return make_response('', 404)
 
+    app.logger.error('Authorization header not found')
     return make_response('', 401)
 
 @app.route('/v1/user/self', methods=['PUT'])
@@ -128,11 +140,13 @@ def update_user_info():
 
     auth_header = request.headers.get('Authorization')
     if not auth_header:
+        app.logger.error('Authorization header not found')
         return make_response('', 401)
 
     try:
         data = request.get_json()
     except (ValueError, KeyError, TypeError):
+        app.logger.error('Invalid JSON request')
         return make_response(''), 400
 
     try:
@@ -143,12 +157,14 @@ def update_user_info():
 
             user = User.query.filter_by(username=username).first()
             if not user:
+                app.logger.error('User not found')
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
         # Check if only allowed fields are being updated
         allowed_fields = ['first_name', 'last_name', 'password']
         updated_fields = [field for field in allowed_fields if field in data]
         if len(updated_fields) != len(data):
+            app.logger.error('Invalid fields for update')
             return make_response(jsonify({'error': 'Invalid fields for update'}), 400)
 
         # Update user information
@@ -174,10 +190,12 @@ def update_user_info():
             "account_created": user.account_created.isoformat()
         }
 
+        app.logger.info('User details updated successfully')
         return make_response('', 204)
     except IntegrityError as e:
         # database integrity 
         db.session.rollback()
+        app.logger.error('Database connection failed')
         return make_response(jsonify({'error': 'Database integrity error'}), 503) 
 
 
