@@ -21,9 +21,11 @@ def verify_password(username, password):
 def health_check():
 
     if request.method in ['HEAD', 'OPTIONS']:
+        app.logger.error('Unsupported HTTP method')
         return make_response(''), 405
 
     if request.get_data():
+        app.logger.error('endpoint does not accept request body')
         return make_response(''), 400
 
     try:

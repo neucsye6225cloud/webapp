@@ -46,6 +46,10 @@ build {
     script = "./packer/scripts/user_permission.sh"
   }
 
+  provisioner "shell" {
+    script = "./packer/scripts/ops_agent_setup.sh"
+  }
+
   provisioner "file" {
     source      = "./csye6225.service"
     destination = "/tmp/"
@@ -53,10 +57,6 @@ build {
 
   provisioner "shell" {
     script = "./packer/scripts/services.sh"
-  }
-
-  provisioner "shell" {
-    script = "./packer/scripts/ops_agent_setup.sh"
   }
 
   # restart service part 
@@ -79,7 +79,7 @@ build {
   }
 
   provisioner "shell" {
-    inline = ["sleep 600",
+    inline = ["sleep 30",
     "sudo systemctl restart google-cloud-ops-agent"]
   }
 }
