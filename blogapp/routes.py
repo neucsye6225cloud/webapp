@@ -21,15 +21,18 @@ def verify_password(username, password):
 def health_check():
 
     if request.method in ['HEAD', 'OPTIONS']:
+        app.logger.error('Unsupported HTTP method')
         return make_response(''), 405
 
     if request.get_data():
+        app.logger.error('endpoint does not accept request body')
         return make_response(''), 400
 
     try:
         with db.engine.connect() as connection:
             connection.execute(text("SELECT 1"))
 
+        app.logger.info('Health check passed')
         return make_response('', 200)
     
     except SQLAlchemyError as e:
