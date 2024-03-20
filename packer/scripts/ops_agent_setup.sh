@@ -28,7 +28,7 @@ logging:
     pipelines:
       default_pipeline:
         receivers: [my-app-receiver]
-        processors: [my-app-processor]
+        processors: [my-app-processor, move_severity]
 EOF
 
 sudo chown -R csye6225:csye6225 /etc/google-cloud-ops-agent/
