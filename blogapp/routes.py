@@ -1,14 +1,15 @@
 import base64
 from flask import request, make_response, jsonify
-from blogapp import app, db, bcrypt, auth
+from blogapp import app, db, bcrypt, auth, project_id, pubsub_topic
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from blogapp.models import User
-import logging
 from datetime import datetime
+from google.cloud import pubsub_v1
+import json
 
-LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.DEBUG)
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path(project_id, pubsub_topic)
 
 @auth.verify_password
 def verify_password(username, password):
@@ -84,6 +85,12 @@ def create_user():
         }
 
         app.logger.info('User created successfully')
+
+        message_data = json.dumps({"email": new_user.username}).encode('utf-8')
+        message = pubsub_v1.types.PubsubMessage(data=message_data)
+        future = publisher.publish(topic_path, message)
+        future.result()
+
         return make_response(jsonify(response_payload), 201)
 
     except IntegrityError as e:
@@ -197,6 +204,33 @@ def update_user_info():
         db.session.rollback()
         app.logger.error('Database connection failed')
         return make_response(jsonify({'error': 'Database integrity error'}), 503) 
+
+
+@app.route('/verify/<to_email>', methods=['GET'])
+def verify_email(to_email):
+    try:
+        user = User.query.filter_by(email=to_email).first()
+        if not user:
+            return make_response(jsonify({'error': 'User not found'}), 404)
+
+        email_sent_time = user.email_sent_time
+        if not email_sent_time:
+            return make_response(jsonify({'error': 'Email verification link not sent'}), 400)
+
+        current_time = datetime.utcnow()
+        time_difference = current_time - email_sent_time
+        time_difference_seconds = time_difference.total_seconds()
+
+        if time_difference_seconds > 120:
+            return make_response(jsonify({'error': 'Verification link has expired'}), 400)
+        
+        user.is_verified = True
+        db.session.commit()
+
+        return make_response(jsonify({'message': 'Email verified successfully'}), 200)
+
+    except Exception as e:
+        return make_response(jsonify({'error': str(e)}), 500)
 
 
 @app.errorhandler(405)

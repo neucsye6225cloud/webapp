@@ -18,6 +18,8 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(255), unique=True, nullable=False)
     account_created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     account_updated = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    email_sent_time = db.Column(db.DateTime, nullable=True)
 
     def __init__(self, first_name, last_name, password, username):
         self.first_name = first_name

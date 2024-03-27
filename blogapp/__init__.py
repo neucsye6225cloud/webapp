@@ -21,6 +21,7 @@ db_host = os.getenv("DB_HOST", "localhost")
 db_port = os.getenv("DB_PORT", "3306")
 project_id = os.getenv("PROJECT_ID")
 instance_name = os.getenv("SQL_INSTANCE")
+pubsub_topic = os.getenv("PUBSUB_TOPIC")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -38,11 +39,6 @@ logging.config.dictConfig({
         }
     },
     'handlers': {
-        # 'wsgi': {
-        #     'class': 'logging.StreamHandler',
-        #     'formatter': 'json',
-        #     'stream': 'ext://sys.stdout'
-        # },
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
             'level': 'INFO',
