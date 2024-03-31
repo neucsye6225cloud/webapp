@@ -87,8 +87,8 @@ def create_user():
         app.logger.info('User created successfully')
 
         message_data = json.dumps({"email": new_user.username}).encode('utf-8')
-        message = pubsub_v1.types.PubsubMessage(data=message_data)
-        future = publisher.publish(topic_path, message)
+        # message = pubsub_v1.types.PubsubMessage(data=message_data)
+        future = publisher.publish(topic_path, message_data)
         future.result()
 
         return make_response(jsonify(response_payload), 201)
