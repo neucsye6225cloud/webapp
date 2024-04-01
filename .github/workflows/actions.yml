@@ -31,6 +31,18 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v3
 
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+            credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Use gcloud CLI
+        run: gcloud info
+
       # export the database URL as environment variable to be used in application
       - name: Start MySQL
         run: |
