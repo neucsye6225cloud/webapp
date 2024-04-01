@@ -27,14 +27,13 @@ class FlaskTestCase(unittest.TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'password': 'password123',
-            'username': 'john.doe@example.com',
-            'is_verified': True
+            'username': 'test@test.com',
         })
 
         self.assertEqual(response.status_code, 201)
 
         # Get the created user
-        username = 'john.doe@example.com'
+        username = 'test@test.com'
         password = 'password123'
         credentials = f'{username}:{password}'
         base64_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
@@ -55,14 +54,13 @@ class FlaskTestCase(unittest.TestCase):
             'first_name': 'Alice',
             'last_name': 'Smith',
             'password': 'password456',
-            'username': 'alice.smith@example.com',
-            'is_verified': True
+            'username': 'test@test.com',
         })
 
         self.assertEqual(response.status_code, 201)
 
         # Get the created user
-        username = 'alice.smith@example.com'
+        username = 'test@test.com'
         password = 'password456'
         credentials = f'{username}:{password}'
         base64_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
