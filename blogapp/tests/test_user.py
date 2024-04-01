@@ -27,7 +27,8 @@ class FlaskTestCase(unittest.TestCase):
             'first_name': 'John',
             'last_name': 'Doe',
             'password': 'password123',
-            'username': 'john.doe@example.com'
+            'username': 'john.doe@example.com',
+            'is_verified': True
         })
 
         self.assertEqual(response.status_code, 201)
@@ -54,7 +55,8 @@ class FlaskTestCase(unittest.TestCase):
             'first_name': 'Alice',
             'last_name': 'Smith',
             'password': 'password456',
-            'username': 'alice.smith@example.com'
+            'username': 'alice.smith@example.com',
+            'is_verified': True
         })
 
         self.assertEqual(response.status_code, 201)
