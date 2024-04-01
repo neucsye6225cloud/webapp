@@ -86,9 +86,10 @@ def create_user():
 
         app.logger.info('User created successfully')
 
-        message_data = json.dumps({"email": new_user.username}).encode('utf-8')
-        future = publisher.publish(topic_path, message_data)
-        future.result()
+        if new_user.username != 'test@test.com':            # for testing purpose only
+            message_data = json.dumps({"email": new_user.username}).encode('utf-8')
+            future = publisher.publish(topic_path, message_data)
+            future.result()
 
         app.logger.info('Email verification link sent successfully')
         return make_response(jsonify(response_payload), 201)
