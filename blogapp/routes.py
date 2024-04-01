@@ -87,10 +87,10 @@ def create_user():
         app.logger.info('User created successfully')
 
         message_data = json.dumps({"email": new_user.username}).encode('utf-8')
-        # message = pubsub_v1.types.PubsubMessage(data=message_data)
         future = publisher.publish(topic_path, message_data)
         future.result()
 
+        app.logger.info('Email verification link sent successfully')
         return make_response(jsonify(response_payload), 201)
 
     except IntegrityError as e:
@@ -121,6 +121,10 @@ def get_user():
             if not user:
                 app.logger.error('User not found')
                 return make_response(jsonify({'error': 'User not found'}), 404)
+            
+            if not user.is_verified:
+                app.logger.error('User not verified')
+                return make_response(jsonify({'error': 'User not verified'}), 403)
             
             response_payload = {
                 "id": user.id,
@@ -167,6 +171,10 @@ def update_user_info():
                 app.logger.error('User not found')
                 return make_response(jsonify({'error': 'User not found'}), 404)
 
+        if not user.is_verified:
+            app.logger.error('User not verified')
+            return make_response(jsonify({'error': 'User not verified'}), 403)
+
         # Check if only allowed fields are being updated
         allowed_fields = ['first_name', 'last_name', 'password']
         updated_fields = [field for field in allowed_fields if field in data]
@@ -209,12 +217,14 @@ def update_user_info():
 @app.route('/verify/<to_email>', methods=['GET'])
 def verify_email(to_email):
     try:
-        user = User.query.filter_by(email=to_email).first()
+        user = User.query.filter_by(username=to_email).first()
         if not user:
+            app.logger.error('User not found')
             return make_response(jsonify({'error': 'User not found'}), 404)
 
         email_sent_time = user.email_sent_time
         if not email_sent_time:
+            app.logger.error('Email verification link not sent')
             return make_response(jsonify({'error': 'Email verification link not sent'}), 400)
 
         current_time = datetime.utcnow()
@@ -222,11 +232,13 @@ def verify_email(to_email):
         time_difference_seconds = time_difference.total_seconds()
 
         if time_difference_seconds > 120:
+            app.logger.error('Verification link has expired')
             return make_response(jsonify({'error': 'Verification link has expired'}), 400)
         
         user.is_verified = True
         db.session.commit()
 
+        app.logger.info('Email verified successfully')
         return make_response(jsonify({'message': 'Email verified successfully'}), 200)
 
     except Exception as e:
