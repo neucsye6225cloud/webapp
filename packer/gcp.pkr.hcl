@@ -82,4 +82,8 @@ build {
     inline = ["sleep 30",
     "sudo systemctl restart google-cloud-ops-agent"]
   }
+
+  post-processor "manifest" {
+    output = "manifest.json"
+  }
 }
