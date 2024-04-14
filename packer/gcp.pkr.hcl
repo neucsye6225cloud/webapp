@@ -84,6 +84,6 @@ build {
   }
 
   post-processor "manifest" {
-    output = "./manifest.json"
+    output = "/tmp/image_manifest.json"
   }
 }

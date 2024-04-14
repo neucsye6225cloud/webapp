@@ -86,7 +86,7 @@ jobs:
 
       - name: Fetch the Image Name
         run: |
-          MY_MI=$(jq -r '.builds[0].artifact_id' image_manifest.json)
+          MY_MI=$(jq -r '.builds[0].artifact_id' /tmp/image_manifest.json)
           echo "MY_MI=$MY_MI" >> $GITHUB_ENV
 
       - name: Generating Template Name with Current Timestamp
