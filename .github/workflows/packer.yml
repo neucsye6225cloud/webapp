@@ -23,7 +23,6 @@ jobs:
     env:
       MACHINE_TYPE: ${{vars.MACHINE_TYPE}}
       TAGS: ${{vars.TAGS}}
-      IMAGE: ${{ secrets.IMAGE }}
       BOOT_DISK_SIZE: ${{vars.BOOT_DISK_SIZE}} 
       BOOT_DISK_TYPE: ${{vars.BOOT_DISK_TYPE}} 
       NETWORK: ${{vars.NETWORK}} 
@@ -36,11 +35,11 @@ jobs:
       DB_HOST: ${{ secrets.SQL_DB_HOST }} 
       DB_NAME: ${{ secrets.SQL_DB_NAME }}
       REGION: ${{vars.REGION}}
-      GROUP_NAME: ${{ secrets.GROUP_NAME }}
+      GROUP_NAME: ${{ vars.GROUP_NAME }}
       DB_INSTANCE_CONNECTION: ${{secrets.DB_INSTANCE_CONNECTION_NAME}}
       PROJECT : ${{secrets.PROJECT_ID}}
-      KEYRING : ${{secrets.KEYRING_NAME}}
-      VM_KEY : ${{secrets.VM_KEY}}
+      KEYRING : ${{vars.KEYRING_NAME}}
+      VM_KEY : ${{vars.VM_KEY}}
       PUBSUB_TOPIC: ${{vars.PUBSUB_TOPIC}}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -104,7 +103,6 @@ jobs:
           --instance-template-region=${{ env.REGION }} \
           --boot-disk-size=${{ env.BOOT_DISK_SIZE }} \
           --boot-disk-type=${{ env.BOOT_DISK_TYPE }} \
-          --boot-disk-kms-key =projects/${{env.PROJECT}}/locations/${{ env.REGION }}/keyRings/${{env.KEYRING}}/cryptoKeys/${{env.VM_KEY}} \
           --network-interface="network=${{ env.NETWORK }},subnet=${{ env.SUBNET }},network-tier=${{ env.NETWORK_TIER }}" \
           --service-account=${{ env.SERVICE_ACCOUNT }} \
           --scopes=${{ env.SCOPES }} \
