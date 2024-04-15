@@ -80,9 +80,9 @@ jobs:
         id: validate
         run: packer validate -var-file='./packer/dev.pkrvars.hcl' packer/.
 
-      - name: Run 'packer build'
-        id: build
-        run: packer build -var-file='./packer/dev.pkrvars.hcl' packer/.
+      # - name: Run 'packer build'
+      #   id: build
+      #   run: packer build -var-file='./packer/dev.pkrvars.hcl' packer/.
 
       - name: Fetch the Image Name
         run: |
@@ -106,7 +106,7 @@ jobs:
           --network-interface="network=${{ env.NETWORK }},subnet=${{ env.SUBNET }},network-tier=${{ env.NETWORK_TIER }}" \
           --service-account=${{ env.SERVICE_ACCOUNT }} \
           --scopes=${{ env.SCOPES }} \
-          --metadata-startup-script="#!/bin/bash\ntouch /tmp/webapp/webapp.env\necho 'DB_HOST=${{env.DB_HOST}}' >> /tmp/webapp/webapp.env\necho 'DB_PORT=3306' >> /tmp/webapp/webapp.env\necho 'DB_NAME=${{env.DB_NAME}}' >> /tmp/webapp/webapp.env\necho 'DB_USER=${{env.DB_USER}}' >> /tmp/webapp/webapp.env\necho 'DB_PASSWORD=${{env.DB_PASSWORD}}' >> /tmp/webapp/webapp.env\necho 'PROJECT_ID=${{env.PROJECT}}' >> /tmp/webapp/webapp.env\necho 'SQL_INSTANCE=${{env.DB_INSTANCE_CONNECTION}}' >> /tmp/webapp/webapp.env\necho 'PUBSUB_TOPIC=${{env.PUBSUB_TOPIC}}' >> /tmp/webapp/webapp.env\nsudo chown -R csye6225:csye6225 /tmp/webapp/webapp.env\nsudo chmod 644 /tmp/webapp/webapp.env\n\ntouch /tmp/success-indicator-file\nsudo systemctl restart csye6225.service\n"
+          --metadata=startup-script="#!/bin/bash\ntouch /tmp/webapp/webapp.env\necho 'DB_HOST=${{env.DB_HOST}}' >> /tmp/webapp/webapp.env\necho 'DB_PORT=3306' >> /tmp/webapp/webapp.env\necho 'DB_NAME=${{env.DB_NAME}}' >> /tmp/webapp/webapp.env\necho 'DB_USER=${{env.DB_USER}}' >> /tmp/webapp/webapp.env\necho 'DB_PASSWORD=${{env.DB_PASSWORD}}' >> /tmp/webapp/webapp.env\necho 'PROJECT_ID=${{env.PROJECT}}' >> /tmp/webapp/webapp.env\necho 'SQL_INSTANCE=${{env.DB_INSTANCE_CONNECTION}}' >> /tmp/webapp/webapp.env\necho 'PUBSUB_TOPIC=${{env.PUBSUB_TOPIC}}' >> /tmp/webapp/webapp.env\nsudo chown -R csye6225:csye6225 /tmp/webapp/webapp.env\nsudo chmod 644 /tmp/webapp/webapp.env\n\ntouch /tmp/success-indicator-file\nsudo systemctl restart csye6225.service\n"
 
       - name: configure instance group
         run: |
