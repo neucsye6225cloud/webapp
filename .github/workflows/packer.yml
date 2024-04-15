@@ -80,9 +80,9 @@ jobs:
         id: validate
         run: packer validate -var-file='./packer/dev.pkrvars.hcl' packer/.
 
-      # - name: Run 'packer build'
-      #   id: build
-      #   run: packer build -var-file='./packer/dev.pkrvars.hcl' packer/.
+      - name: Run 'packer build'
+        id: build
+        run: packer build -var-file='./packer/dev.pkrvars.hcl' packer/.
 
       - name: Fetch the Image Name
         run: |
