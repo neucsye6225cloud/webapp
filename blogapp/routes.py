@@ -40,7 +40,7 @@ def health_check():
         app.logger.error('Database connection failed')
         return make_response(''), 503
 
-@app.route('/v1/user', methods=['POST'])
+@app.route('/v2/user', methods=['POST'])
 def create_user():
 
     # check for syntax error in json request body
@@ -104,7 +104,7 @@ def create_user():
         app.logger.error('error creating the user')
         return make_response('', 400)
 
-@app.route('/v1/user/self', methods=['GET'])
+@app.route('/v2/user/self', methods=['GET'])
 @auth.login_required
 def get_user():
     auth_header = request.headers.get('Authorization')
@@ -146,7 +146,7 @@ def get_user():
     app.logger.error('Authorization header not found')
     return make_response('', 401)
 
-@app.route('/v1/user/self', methods=['PUT'])
+@app.route('/v2/user/self', methods=['PUT'])
 @auth.login_required
 def update_user_info():
 

@@ -23,7 +23,7 @@ class FlaskTestCase(unittest.TestCase):
 
     def test_create_and_get_user(self):
         # Create a new user
-        response = self.app.post('/v1/user', json={
+        response = self.app.post('/v2/user', json={
             'first_name': 'John',
             'last_name': 'Doe',
             'password': 'password123',
@@ -38,7 +38,7 @@ class FlaskTestCase(unittest.TestCase):
         credentials = f'{username}:{password}'
         base64_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
 
-        response = self.app.get('/v1/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
+        response = self.app.get('/v2/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
 
         self.assertEqual(response.status_code, 200)
         user_data = json.loads(response.data.decode('utf-8'))
@@ -50,7 +50,7 @@ class FlaskTestCase(unittest.TestCase):
 
     def test_update_and_get_user(self):
         # Create a new user
-        response = self.app.post('/v1/user', json={
+        response = self.app.post('/v2/user', json={
             'first_name': 'Alice',
             'last_name': 'Smith',
             'password': 'password456',
@@ -64,13 +64,13 @@ class FlaskTestCase(unittest.TestCase):
         password = 'password456'
         credentials = f'{username}:{password}'
         base64_credentials = base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
-        response = self.app.get('/v1/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
+        response = self.app.get('/v2/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
 
         self.assertEqual(response.status_code, 200)
         user_data_before_update = json.loads(response.data.decode('utf-8'))
 
         # Update the user
-        response = self.app.put('/v1/user/self', json={
+        response = self.app.put('/v2/user/self', json={
             'first_name': 'Alice H',
             'last_name': 'Smithsonian'
         }, headers={'Authorization': 'Basic ' + base64_credentials})
@@ -78,7 +78,7 @@ class FlaskTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 204)
 
         # Get the updated user
-        response = self.app.get('/v1/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
+        response = self.app.get('/v2/user/self', headers={'Authorization': 'Basic ' + base64_credentials})
 
         self.assertEqual(response.status_code, 200)
         user_data_after_update = json.loads(response.data.decode('utf-8'))
